@@ -11,10 +11,15 @@ ball::ball()
 	prevY = y;
 
 	_velocity = 3;
-	_angle = 60.0f;
+
+	float rand_int = 0;
+	do {
+		rand_int = float(std::rand() % 360 + 1);
+	} while (!(rand_int > 5.0f && rand_int < 175.0f) && !(rand_int > 185.0f && rand_int < 355.0f));
+	_angle = rand_int;
 
 	_isActive = true;
-	_isStatic = true; // toggle to on when countdown ends
+	_isStatic = false; // toggle to on when countdown ends
 
 	for (int i = 0; i < size; i++) {
 		texture.push_back(std::string(size,'0'));
@@ -22,9 +27,12 @@ ball::ball()
 	}
 }
 
-void ball::update(double delta, boundingRectangle pad, direction padDirection, std::vector<brick>& bricks)
+void ball::update(double delta, pad& p1, std::vector<brick>& bricks)
 {
 	//delta = 0.1;
+
+	boundingRectangle pad = p1.rect;
+	direction padDirection = p1.getDirection();
 
 	prevX = x;
 	prevY = y;
@@ -33,7 +41,7 @@ void ball::update(double delta, boundingRectangle pad, direction padDirection, s
 	double distanceY = linearVelocityY(_angle) * _velocity * delta;
 
 	//bounce from side walls
-	if ( ((x + distanceX) < 0.2) || ((x + (double(size) / 10) + distanceX) > ((game_width / 10) - 0.3))) {
+	if (((x + distanceX) < 0.2) || ((x + (double(size) / 10) + distanceX) > ((game_width / 10) - 0.3))) {
 		_angle = 360.0f - _angle;
 
 		if (_angle > 260.0f && _angle < 280.0f) {
@@ -49,7 +57,7 @@ void ball::update(double delta, boundingRectangle pad, direction padDirection, s
 
 	//bounce from top + bottom walls
 	//disable bottom walls on release
-	if (((y + distanceY) < 0.2) || ((y + (double(size) / 10) + distanceY) > ((game_height / 10) - 0.2))) {
+	if ((y + distanceY) < 0.2){ // || ((y + (double(size) / 10) + distanceY) > ((game_height / 10) - 0.2))) {
 		_angle = 180.0f - _angle;
 
 
@@ -158,6 +166,33 @@ void ball::update(double delta, boundingRectangle pad, direction padDirection, s
 
 			_angle = 360.0f - (_angle - 180.0f);
 
+			if (bricks[i].containPowerUp) {
+				int randSelect = rand() % 5;
+				switch (randSelect)
+				{
+				case 1:
+				{
+					_velocity *= 0.75;
+					break;
+				}
+				case 2:
+				{
+					_velocity *= 1.25;
+					break;
+				}
+				case 3:
+				{
+					p1._velocity += 0.5;
+				}
+				case 4:
+				{
+					p1._velocity -= 0.5;
+				}
+				default:
+					break;
+				}
+			}
+
 			distanceX = linearVelocityX(_angle) * _velocity * delta;
 			distanceY = linearVelocityY(_angle) * _velocity * delta;
 			bricks[i].deactivate();
@@ -197,6 +232,23 @@ void ball::render()
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 		std::cout << std::flush << texture[i];
 	}
+}
+
+void ball::reset()
+{
+	x = 5;
+	y = 8;
+
+	prevX = x;
+	prevY = y;
+
+	_velocity = 3;
+
+	float rand_int = 0;
+	do {
+		rand_int = float(std::rand() % 360 + 1);
+	} while (!(rand_int > 5.0f && rand_int < 175.0f) && !(rand_int > 185.0f && rand_int < 355.0f));
+	_angle = rand_int;
 }
 
 bool ball::isClamped(float mid, float A, float B)
@@ -250,13 +302,4 @@ float ball::snap(float angle)
 		return -(abs(int(angle)) - remainder);
 	else
 		return angle + 15 - remainder;
-}
-void ball::collideWithBoundingRectangle(boundingRectangle r, double& distanceX, double& distanceY)
-{
-	//x1<x2
-	//y1<y2
-	if (checkCollision2w(rect, r)) {
-
-	}
-
 }

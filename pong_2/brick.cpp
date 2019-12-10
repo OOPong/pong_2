@@ -15,7 +15,12 @@ brick::brick(float xin, float yin, char no) {
 	_isActive = true;
 	_isStatic = true;
 
-	color = rand() % (256 - 16 + 1) + 16;
+	int randIndex = rand() % 5;
+
+	color = colors[randIndex];
+	if (color == 79) {
+		containPowerUp = true;
+	}
 
 	std::string tempstr = "";
 	tempstr += no;

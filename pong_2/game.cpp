@@ -120,9 +120,36 @@ void game::showSplash(game::game_state& current_state)
 
 void game::showMenu(game::game_state& current_state)
 {
+	if (!(current_state.result == game_result::none)) {
+		exit(0);
+	}
 	system("CLS");
+	//change font size
+	CONSOLE_FONT_INFOEX cfi;
+	cfi.cbSize = sizeof(cfi);
+	cfi.nFont = 0;
+	cfi.dwFontSize.X = int(game_width / 10);                   // Width of each character in the font
+	cfi.dwFontSize.Y = int(game_height / 5);                  // Height
+	cfi.FontFamily = FF_DONTCARE;
+	cfi.FontWeight = FW_NORMAL;
+	std::wcscpy(cfi.FaceName, L"Consolas"); // Choose your font
+	SetCurrentConsoleFontEx(current_state.stdHandle, FALSE, &cfi);
+
+	//set console
+	HWND hwnd = GetConsoleWindow();
+	RECT rect = { 100, 300, 820, 967 };
+	MoveWindow(hwnd, rect.top, rect.left, rect.bottom - rect.top, rect.right - rect.left, TRUE);
+
+	//hide cursor
+	CONSOLE_CURSOR_INFO ConCurInf;
+	ConCurInf.dwSize = 10;
+	ConCurInf.bVisible = false;
+	SetConsoleCursorInfo(current_state.stdHandle, &ConCurInf);
+
 	std::vector<std::string> items;
-	items.push_back("PLAY");
+	items.push_back("NEW GAME");
+	items.push_back("CONTINUE");
+	items.push_back("SCORE");
 	items.push_back("EXIT");
 	int selectedIndex = 1;
 	bool selected = false;
@@ -133,7 +160,7 @@ void game::showMenu(game::game_state& current_state)
 	}
 	while (!selected) {
 		gotoxy(20, 15);
-		std::cout << "Your selection: " << items[selectedIndex - 1] << std::endl;
+		std::cout << "Your selection: " << items[selectedIndex - 1] << "          "<< std::endl;
 		if (GetAsyncKeyState(VK_UP)) {
 			if (selectedIndex - 1 < 1) {
 				selectedIndex = items.size();
@@ -161,19 +188,140 @@ void game::showMenu(game::game_state& current_state)
 	switch (selectedIndex)
 	{
 	case 1:
-		current_state._mainState = main_state::playing;
+	{
+		current_state._mainState = main_state::newGame;
 		break;
+	}
 	case 2:
+	{
+		if (current_state.resuming) {
+			current_state._mainState = main_state::playing;
+		}
+		else {
+			current_state._mainState = main_state::newGame;
+		}
+		break;
+	}
+	case 3:
+		current_state._mainState = main_state::showingResult;
+		break;
+	case 4:
 		current_state._mainState = main_state::exiting;
-		exit(0);
 		break;
 	default:
 		break;
 	}
 }
 
-void game::showResult(game::game_state current_state)
+void game::showResult(game::game_state& current_state)
 {
+	auto timeDifference = std::chrono::steady_clock::now() - current_state.scoreTimer;
+	auto score = getScore(timeDifference.count());
+
+	std::vector<std::vector<std::string> > lines;
+	csvLib::parseCSV(csvLib::getFileContents("highscore.txt"), lines);
+	std::vector<std::pair<std::string, long>> scores = parseScores(lines);
+
+	system("CLS");
+
+	//change font size
+	CONSOLE_FONT_INFOEX cfi;
+	cfi.cbSize = sizeof(cfi);
+	cfi.nFont = 0;
+	cfi.dwFontSize.X = int(game_width / 10);                   // Width of each character in the font
+	cfi.dwFontSize.Y = int(game_height / 5);                  // Height
+	cfi.FontFamily = FF_DONTCARE;
+	cfi.FontWeight = FW_NORMAL;
+	std::wcscpy(cfi.FaceName, L"Consolas"); // Choose your font
+	SetCurrentConsoleFontEx(current_state.stdHandle, FALSE, &cfi);
+
+	//set console
+	HWND hwnd = GetConsoleWindow();
+	RECT rect = { 100, 300, 820, 967 };
+	MoveWindow(hwnd, rect.top, rect.left, rect.bottom - rect.top, rect.right - rect.left, TRUE);
+
+	//hide cursor
+	CONSOLE_CURSOR_INFO ConCurInf;
+	ConCurInf.dwSize = 10;
+	ConCurInf.bVisible = false;
+	SetConsoleCursorInfo(current_state.stdHandle, &ConCurInf);
+	gotoxy(23, 12);
+	if (current_state.result == game_result::lose) {
+		std::cout << "YOU LOSE!";
+	}
+	else if (current_state.result == game_result::win) {
+		std::cout << "YOU WIN!";
+		gotoxy(23, 13);
+		std::cout << "YOUR SCORE: " << score << std::endl;
+		gotoxy(15, 21);
+		std::cout << "Press SPACE to save your score" << std::endl;
+		gotoxy(0, 0);
+	}
+	gotoxy(23, 14);
+	std::cout << "HIGH SCORES:" << std::endl;
+	for (int i = 0; i < 5; i++) {
+		gotoxy(25, 15+i);
+		std::cout << "[" << i+1 << "]" << scores[i].first << ": " << scores[i].second << std::endl;
+	}
+
+	gotoxy(15, 20);
+	std::cout << "Press ESCAPE to exit" << std::endl;
+
+	bool selected = false;
+	while (!GetAsyncKeyState(VK_ESCAPE)) {
+		if (GetAsyncKeyState(VK_SPACE) && (current_state.result == game_result::win)) {
+			gotoxy(20, 22);
+			std::cout << "Please enter your name: ";
+			gotoxy(20, 23);
+			std::string tempname;
+			std::cin >> tempname;
+			scores.push_back(std::make_pair(tempname, score));
+			saveScores(scores);
+		}
+	}
+	current_state._mainState = main_state::exiting;
+}
+
+long game::getScore(float timeInSeconds)
+{
+	return 1e6;
+	if (timeInSeconds > 180) {
+		return 0;
+	}
+	else {
+		return ((180 - timeInSeconds) * 100);
+	}
+}
+
+std::vector<std::pair<std::string, long>> game::parseScores(std::vector<std::vector<std::string>> lines)
+{
+	std::vector<std::pair<std::string, long>> result;
+	for (int i = 0; i < lines.size(); i++) {
+		result.push_back(std::make_pair(lines[i][0], stol(lines[i][1])));
+	}
+	std::sort(result.begin(), result.end(), compareScores);
+	return result;
+}
+
+void game::saveScores(std::vector<std::pair<std::string, long>> result)
+{
+	std::sort(result.begin(), result.end(), compareScores);
+	std::vector<std::vector<std::string>> lines;
+	for (int i = 0; i < result.size(); i++) {
+		std::vector<std::string> temp;
+		temp.push_back(result[i].first);
+		temp.push_back(std::to_string(result[i].second));
+		lines.push_back(temp);
+	}
+	csvLib::writeCSV("highscore.txt", lines);
+}
+
+bool game::compareScores(const std::pair<std::string, long> a, const std::pair<std::string, long> b)
+{
+	if (a.second < b.second) {
+		return true;
+	}
+	return false;
 }
 
 bool game::handleEvents(game_state* state) {
@@ -187,7 +335,9 @@ bool game::handleEvents(game_state* state) {
 	else if (GetAsyncKeyState(VK_DOWN)) {
 		state->p1.movement = direction::none;
 	}
-	else if (GetAsyncKeyState(VK_ESCAPE)) { return true; }
+	else if (GetAsyncKeyState(VK_ESCAPE)) {
+		state->_mainState = main_state::showingMenu;
+	}
 	return false; // true if the user wants to quit the game
 }
 
@@ -201,15 +351,25 @@ void game::update(game::game_state* state, std::chrono::steady_clock::duration d
 	}
 
 	state->p1.update(frameTime);
-	state->b1.update(frameTime, state->p1.rect, state->p1.getDirection(), state->bricks);
+	state->b1.update(frameTime, state->p1, state->bricks);
 
 	for (int i = 0; i < state->bricks.size(); i++) {
 		state->bricks[i].update(frameTime);
 	}
 
 	//if b1 out of bounds
-	//deduct points
-	//if points = 0
+	//lose
+	if (state->b1.rect.y2 > (game_width / 10)) {
+		state->result = game_result::lose;
+		state->_mainState = main_state::showingResult;
+	}
+	for (int i = 0; i < state->bricks.size(); i++) {
+		if (state->bricks[i]._isActive) {
+			break;
+		}
+		state->result = game_result::win;
+		state->_mainState = main_state::showingResult;
+	}
 	//set game state to showing results
 }
 
@@ -250,19 +410,31 @@ int game::loop() {
 			showSplash(current_state);
 			break;
 		}
-		case main_state::paused:
+		case main_state::newGame:
+		{
+			if (!current_state.resuming) {
+				brickSetup(current_state);
+				borderSetup(current_state);
+				current_state.resuming = true;
+				current_state.scoreTimer = std::chrono::steady_clock::now();
+			}
+			else {
+				current_state.b1.reset();
+				current_state.p1.reset();
+			}
+			current_state._mainState = main_state::playing;
 			break;
+		}
 		case main_state::showingMenu:
 		{
 			showMenu(current_state);
-			brickSetup(current_state);
-			borderSetup(current_state);
 			break;
 		}
 		case main_state::playing:
 		{
 			game::update(&current_state, delta_time);
 			game::render(current_state, time_start);
+			break;
 		}
 		case main_state::showingResult:
 		{
@@ -270,7 +442,11 @@ int game::loop() {
 			break;
 		}
 		case main_state::exiting:
+		{
+			quit_game = true;
+			exit(0);
 			break;
+		}
 		default:
 			break;
 		}

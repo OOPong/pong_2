@@ -67,6 +67,21 @@ void pad::render()
 	}
 }
 
+void pad::reset()
+{
+	x = ((game_width / 10) / 2) - ((double(length) / 10) / 2); // center the paddle
+	y = 9;
+	prevX = x;
+	prevY = y;
+
+	_velocity = 8;
+
+	vx = 8;
+	vy = 0;
+
+	movement = direction::none;
+}
+
 direction pad::getDirection()
 {
 	if (vx < 0) {
