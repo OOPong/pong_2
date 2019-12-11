@@ -32,13 +32,16 @@ void pad::update(double d)
 	prevY = y;
 
 	double distance =  _velocity * d;
-	if ((movement == direction::left) && ((x - (double(length) / 20) - distance) > 0.1)) {
+	if ((movement == direction::left) && ((x - (double(length) / 20) - distance) > 0.05)) {
 		x = x - distance;
 		vx = -1;
 	}
-	else if ( (movement == direction::right) && ( (x + (double(length) / 20) + distance) < ((game_width/10)-0.2)) ) {
+	else if ( (movement == direction::right) && ( (x + (double(length) / 20) + distance) < ((game_width/10)-0.1)) ) {
 		x = x + distance;
 		vx = 1;
+	}
+	else {
+		vx = 0;
 	}
 	movement = direction::none;
 

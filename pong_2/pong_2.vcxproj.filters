@@ -27,9 +27,6 @@
     <ClCompile Include="pad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="visibleObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

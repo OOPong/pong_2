@@ -71,37 +71,45 @@ void ball::update(double delta, boundingRectangle pad, direction padDirection, s
 	//bounce with player paddle
 	if (checkCollision2w(rect, pad)) {
 
-		//bool kickOut = false;
-		if (y + (double(size) / 10) > pad.y1) {
-			x = prevX;
-			y = prevY - 0.2f;
+		//ball approaching from top side
+		if ((rect.y2 > pad.y1) && (90 <= _angle && _angle <= 270)) {
+			y -= (rect.y2 - pad.y1) + 0.1f;
 		}
-		if (y - (double(size) / 10) < pad.y2) {
-			x = prevX;
-			y = prevY + 0.2f;
+		// y2: bottom ball border
+		// difference is how deep the ball is inside
+		// get it out by subtracting by this amount
+
+		//ball approaching from bottom side
+		if ((rect.y1 < pad.y2) && ((0 <= _angle && _angle <= 90) || (270 <= _angle && _angle <= 360))) {
+			y += (pad.y2 - rect.y1) + 0.1f;
 		}
-		if (x + (double(size) / 10) > pad.x1) {
-			x = prevX - 0.1f;
-			y = prevY;
+		// y1: top ball border
+		// difference is how deep the ball is inside
+		// get it out by adding this amount
+
+		//ball approaching from left side
+		if ((rect.x2 > pad.x1) && (0 < _angle && _angle < 180)) {
+			x -= (rect.x2 - pad.x1) + 0.1f;
 		}
-		if (x - (double(size) / 10) < pad.x2) {
-			x = prevX + 0.1f;
-			y = prevY;
+
+		//ball approaching from right side
+		if ((rect.x1 < pad.x2) && (180 < _angle && _angle < 360)) {
+			x += (pad.x2 - rect.x1) + 0.1f;
 		}
 		_angle = 360.0f - (_angle - 180.0f);
 
-		if (_angle > 5.0f && _angle < 355.0f) {
+		if (1){//_angle > 5.0f && _angle < 355.0f) {
 			if (padDirection == direction::left)
 			{
 				// moving left
-				_angle -= 20.0f;
+				_angle -= 15.0f;
 				if (_angle < 0) {
 					_angle = 360.0f - _angle;
 				}
 			}
 			else if (padDirection == direction::right)
 			{
-				_angle += 20.0f;
+				_angle += 15.0f;
 				if (_angle > 360.0f) {
 					_angle = _angle - 360.0f;
 				}
@@ -115,25 +123,37 @@ void ball::update(double delta, boundingRectangle pad, direction padDirection, s
 		_velocity = _velocity * 1.1f;
 	}
 
+	//bounce and break bricks
 	bool collided = false;
 	for (int i = 0; i < bricks.size(); i++) {
 		if (bricks[i]._isActive && (checkCollision2w(rect, bricks[i].getBoundingRect())) && !collided) {
+
 			auto a = bricks[i].getBoundingRect();
-			if (y + (double(size) / 10) > a.y1) {
-				x = prevX;
-				y = prevY - 0.01f;
+
+			//ball approaching from top side
+			if ((rect.y2 > a.y1) && (90 <= _angle && _angle <= 270)) {
+				y -= (rect.y2 - a.y1);
 			}
-			if (y - (double(size) / 10) < a.y2) {
-				x = prevX;
-				y = prevY + 0.01f;
+			// y2: bottom ball border
+			// difference is how deep the ball is inside
+			// get it out by subtracting by this amount
+
+			//ball approaching from bottom side
+			if ((rect.y1 < a.y2) && ((0 <= _angle && _angle <= 90) || (270 <= _angle && _angle <= 360))) {
+				y += (a.y2 - rect.y1);
 			}
-			if (x + (double(size) / 10) > a.x1) {
-				x = prevX - 0.01f;
-				y = prevY;
+			// y1: top ball border
+			// difference is how deep the ball is inside
+			// get it out by adding this amount
+
+			//ball approaching from left side
+			if ((rect.x2 > a.x1) && (0 < _angle && _angle < 180)) {
+				x -= (rect.x2 - a.x1);
 			}
-			if (x - (double(size) / 10) < a.x2) {
-				x = prevX + 0.01f;
-				y = prevY;
+
+			//ball approaching from right side
+			if ((rect.x1 < a.x2) && (180 < _angle && _angle < 360)) {
+				x += (a.x2 - rect.x1);
 			}
 
 			_angle = 360.0f - (_angle - 180.0f);
@@ -148,6 +168,16 @@ void ball::update(double delta, boundingRectangle pad, direction padDirection, s
 	x += distanceX;
 	y += distanceY;
 
+	if (_velocity > 5) {
+		_velocity = 5;
+	}
+
+
+	//snap to nearest 15 deg angle
+	_angle = snap(_angle);
+
+
+	//update bounding rectangle
 	rect.x1 = x - double(size) / 10;
 	rect.x2 = x + double(size) / 10;
 	rect.y1 = y - double(size) / 10;
@@ -209,6 +239,17 @@ double ball::linearVelocityY(double angle)
 		angle = 360 + angle;
 	}
 	return (float)std::sin(angle * (M_PI / 180.0f));
+}
+float ball::snap(float angle)
+{
+	int remainder = abs(int(angle)) % 15;
+	if (remainder == 0)
+		return angle;
+
+	if (angle < 0)
+		return -(abs(int(angle)) - remainder);
+	else
+		return angle + 15 - remainder;
 }
 void ball::collideWithBoundingRectangle(boundingRectangle r, double& distanceX, double& distanceY)
 {

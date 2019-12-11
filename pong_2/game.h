@@ -4,6 +4,7 @@
 #include "ball.h"
 #include "pad.h"
 #include "brick.h"
+
 using namespace std::chrono_literals;
 class game
 {
@@ -17,14 +18,21 @@ class game
 			ball b1;
 			pad p1;
 			std::vector<brick> bricks;
-			main_state _mainState = main_state::uninitialized;
+			main_state _mainState = main_state::showingSplash;
 			HANDLE stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+			unsigned int livesLeft = 3;
 		};
+
 		static bool handleEvents(game_state*);
 		static void update(game_state*, std::chrono::steady_clock::duration);
 		static void render(game_state, std::chrono::time_point<std::chrono::steady_clock>);
 		static int loop();
+
 		static void borderSetup(game_state);
+		static void brickSetup(game_state&);
+		static void showSplash(game_state&);
+		static void showMenu(game_state&);
+		static void showResult(game_state);
 
 		static void gotoxy(int x, int y)
 		{

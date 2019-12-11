@@ -128,7 +128,6 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pad.cpp" />
-    <ClCompile Include="Source.cpp" />
     <ClCompile Include="visibleObject.cpp" />
   </ItemGroup>
   <ItemGroup>

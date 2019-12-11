@@ -15,14 +15,35 @@ brick::brick(float xin, float yin, char no) {
 	_isActive = true;
 	_isStatic = true;
 
+	color = rand() % (256 - 16 + 1) + 16;
+
+	std::string tempstr = "";
+	tempstr += no;
+	for (int i = 0; i < length - 2; i++) {
+		tempstr += ' ';
+	}
+	tempstr += no;
+
 	for (int i = 0; i < height; i++) {
-		texture.push_back(std::string(length, no));
 		clearTexture.push_back(std::string(length, ' '));
 	}
+
+	texture.push_back(std::string(length, no));
+	for (int i = 0; i < height-2; i++) {
+		texture.push_back(tempstr);
+	}
+	texture.push_back(std::string(length, no));
 }
 void brick::update(double d)
 {
 	if (_isActive) {
+		if (breakTimer == 0) {
+			blowUp();
+		}
+		else if (breakTimer != -1) {
+			breakTimer -= 1;
+		}
+
 		rect.x1 = (x - (double(length) / 20));
 		rect.x2 = (x + (double(length) / 20));
 		rect.y1 = (y - (double(height) / 20));
@@ -40,15 +61,17 @@ void brick::render()
 			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 			std::cout << std::flush << clearTexture[i];
 		}
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 		for (int i = 0; i < texture.size(); i++) {
 			COORD c = { round(x * 10) - marginX, round(y * 10) - marginY + i }; // -1 because ball coords is centered
 			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 			std::cout << std::flush << texture[i];
 		}
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 	}
 }
 
-void brick::deactivate()
+void brick::blowUp()
 {
 	long marginX = length / 2;
 	long marginY = height / 2;
@@ -58,6 +81,13 @@ void brick::deactivate()
 		std::cout << std::flush << clearTexture[i];
 	}
 	_isActive = false;
+}
+
+void brick::deactivate()
+{
+	if (breakTimer == -1) {
+		breakTimer = 1;
+	}
 }
 
 boundingRectangle brick::getBoundingRect()

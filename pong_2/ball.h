@@ -18,6 +18,8 @@ private:
 	double linearVelocityX(double angle);
 	double linearVelocityY(double angle);
 
+	float snap(float angle);
+
 	void collideWithBoundingRectangle(boundingRectangle r, double& distanceX, double& distanceY);
 	bool isClamped(float, float, float);
 	bool checkCollision1w(boundingRectangle, boundingRectangle);
