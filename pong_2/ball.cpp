@@ -2,16 +2,16 @@
 
 ball::ball()
 {
-	size = 2;
+	size = 1;
 
 	x = 5;
-	y = 6;
+	y = 8;
 
 	prevX = x;
 	prevY = y;
 
 	_velocity = 3;
-	_angle = 45.0f;
+	_angle = 60.0f;
 
 	_isActive = true;
 	_isStatic = true; // toggle to on when countdown ends
@@ -71,11 +71,23 @@ void ball::update(double delta, boundingRectangle pad, direction padDirection, s
 	//bounce with player paddle
 	if (checkCollision2w(rect, pad)) {
 
+		//bool kickOut = false;
 		if (y + (double(size) / 10) > pad.y1) {
 			x = prevX;
-			y = prevY - 0.1f;
+			y = prevY - 0.2f;
 		}
-
+		if (y - (double(size) / 10) < pad.y2) {
+			x = prevX;
+			y = prevY + 0.2f;
+		}
+		if (x + (double(size) / 10) > pad.x1) {
+			x = prevX - 0.1f;
+			y = prevY;
+		}
+		if (x - (double(size) / 10) < pad.x2) {
+			x = prevX + 0.1f;
+			y = prevY;
+		}
 		_angle = 360.0f - (_angle - 180.0f);
 
 		if (_angle > 5.0f && _angle < 355.0f) {
@@ -106,24 +118,23 @@ void ball::update(double delta, boundingRectangle pad, direction padDirection, s
 	bool collided = false;
 	for (int i = 0; i < bricks.size(); i++) {
 		if (bricks[i]._isActive && (checkCollision2w(rect, bricks[i].getBoundingRect())) && !collided) {
-			/*
-			if (y + (double(size) / 10) > bricks[i].y1) {
+			auto a = bricks[i].getBoundingRect();
+			if (y + (double(size) / 10) > a.y1) {
 				x = prevX;
 				y = prevY - 0.01f;
 			}
-			if (y - (double(size) / 10) < bricks[i].y2) {
+			if (y - (double(size) / 10) < a.y2) {
 				x = prevX;
 				y = prevY + 0.01f;
 			}
-			if (x + (double(size) / 10) > bricks[i].x1) {
+			if (x + (double(size) / 10) > a.x1) {
 				x = prevX - 0.01f;
 				y = prevY;
 			}
-			if (x - (double(size) / 10) < bricks[i].x2) {
+			if (x - (double(size) / 10) < a.x2) {
 				x = prevX + 0.01f;
 				y = prevY;
 			}
-			*/
 
 			_angle = 360.0f - (_angle - 180.0f);
 

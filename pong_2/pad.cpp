@@ -44,8 +44,8 @@ void pad::update(double d)
 
 	rect.x1 = (x - (double(length) / 20));
 	rect.x2 = (x + (double(length) / 20));
-	rect.y1 = (y - 0.1);
-	rect.y2 = (y + 0.1);
+	rect.y1 = (y - (double(height) / 20));
+	rect.y2 = (y + (double(height) / 20));
 }
 
 void pad::render()

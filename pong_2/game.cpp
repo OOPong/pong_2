@@ -65,7 +65,7 @@ void game::update(game::game_state* state, std::chrono::steady_clock::duration d
 
 	double frameTime = delta.count() / 1e9;
 	if ( frameTime > 0.1) {
-		//return;
+		return;
 	}
 											//skips update if frame took too long
 	state->p1.update(frameTime);
@@ -95,19 +95,19 @@ int game::loop() {
 
 	game::game_state current_state;
 
-	char str[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	char str[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 	//add bricks
-	float totalBricksHeight = bricks_grid_height * 0.4; //brick height = 0.4
-	float vleftovers = ((game_height/10) - totalBricksHeight) / 2;
-	//float vleftovers = 3; // starts placing bricks at y=3
+	//float totalBricksHeight = bricks_grid_height * 0.4; //brick height = 0.4
+	//float vleftovers = ((game_height/10) - totalBricksHeight) / 2;
+	float vleftovers = 1; // starts placing bricks at y=3
 	int count = 0;
 	for (int i = 0; i < bricks_grid_height; i++) {
 		float totalBricksWidth = bricks_grid_width * 1; // brick width = 1;;
 		float hleftovers = (game_width/10) - totalBricksWidth;
 		float leftside = hleftovers / 2;
 		for (int j = 0; j < bricks_grid_width; j++) {
-			brick tempBrick( leftside + (double(j)+1)*1, vleftovers + (double(i)+1)*0.4, str[count]);
+			brick tempBrick( leftside - 0.5 + (double(j)+1)*1, vleftovers + (double(i)+1)*0.4, str[count]);
 			current_state.bricks.push_back(tempBrick);
 			count++;
 		}
