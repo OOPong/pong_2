@@ -16,7 +16,7 @@ class game
 		struct game_state {
 			ball b1;
 			pad p1;
-			brick bricks[bricks_no];
+			std::vector<brick> bricks;
 			main_state _mainState = main_state::uninitialized;
 			HANDLE stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 		};
