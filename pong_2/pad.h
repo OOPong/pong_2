@@ -4,7 +4,14 @@ class pad : public visibleObject
 {
 public:
 	pad();
+	void update(double);
+	void render();
+	direction getDirection();
 
-	//std::string texture = "PPPPPPPPPPPPPPPP";//"=======";
+	direction movement = direction::none;
+	long length;
+	long height;
+private:
+	double _velocity;
 };
 

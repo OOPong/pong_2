@@ -1,30 +1,10 @@
 ﻿#pragma once
 
-#define _WIN32_WINNT 0x0501 // windows.h version
-#define _CRT_SECURE_NO_WARNINGS
-
+#include "config.h"
 #include "ball.h"
 #include "pad.h"
 #include "brick.h"
-#include <chrono>
-#include <vector>
-#include <list>
-#include <Windows.h>
-#include <iostream>
-constexpr int width = 250;
-constexpr int height = 250;
-constexpr int bricks_no = 50;
-
 using namespace std::chrono_literals;
-class math {
-public:
-	enum class direction {
-		right, left, bottom, top
-	};
-	static void move();
-	static void intercept(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, direction d);
-	static void ballIntercept();
-};
 class game
 {
 	public:
@@ -40,11 +20,11 @@ class game
 			main_state _mainState = main_state::uninitialized;
 			HANDLE stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 		};
-		static bool handleEvents();
-		static void update(game_state*);
-		static void render(game_state );
-		static game_state interpolate(game_state const& current, game_state const& previous, float alpha);
+		static bool handleEvents(game_state*);
+		static void update(game_state*, std::chrono::steady_clock::duration);
+		static void render(game_state, std::chrono::time_point<std::chrono::steady_clock>);
 		static int loop();
+		static void borderSetup(game_state);
 
 		static void gotoxy(int x, int y)
 		{
