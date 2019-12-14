@@ -22,12 +22,12 @@ void Ball::drawball()
 {
 	//tạo ra bằng cách in ra màn hình console các kí tự ' ' và 'o'
 	COORD c;
-	c.X = int(this->xball);
-	c.Y = int(this->yball);
+	c.X = int(floor(this->xball));
+	c.Y = int(floor(this->yball));
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);	//xác định tọa độ cột và hàng phía trước của bóng
 	cout << ' ';													//in ra các kí tự ' '
-	c.X = int(this->x);
-	c.Y = int(this->y);
+	c.X = int(floor(this->x));
+	c.Y = int(floor(this->y));
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);	//xác định tọa độ hiện tại của bóng
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);	//chọn màu cho bóng (màu vàng)
 	cout << 'o';													//in quả bóng

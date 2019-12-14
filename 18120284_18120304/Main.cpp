@@ -7,4 +7,5 @@ void main()
 	start();
 	rungame(); 
 	system("pause");
+	
 }

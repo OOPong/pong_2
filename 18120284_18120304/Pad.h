@@ -4,6 +4,7 @@
 #include <ctime>
 #include <stdlib.h>
 #include <cstdlib>
+#include <string>
 
 using namespace std;
 
