@@ -3,7 +3,8 @@
 //constants
 constexpr int game_width = 100;
 constexpr int game_height = 100;
-constexpr int bricks_no = 1;
+constexpr int bricks_grid_height = 3;
+constexpr int bricks_grid_width = 3;
 
 //directives
 #define _WIN32_WINNT 0x0501 // windows.h version

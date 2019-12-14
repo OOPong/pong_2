@@ -22,7 +22,7 @@ ball::ball()
 	}
 }
 
-void ball::update(double delta, boundingRectangle r, direction padDirection)
+void ball::update(double delta, boundingRectangle pad, direction padDirection, std::vector<brick>& bricks)
 {
 	//delta = 0.1;
 
@@ -33,7 +33,7 @@ void ball::update(double delta, boundingRectangle r, direction padDirection)
 	double distanceY = linearVelocityY(_angle) * _velocity * delta;
 
 	//bounce from side walls
-	if ( ((x + distanceX) < 0.2) || ((x + double(2 / 10) + distanceX) > ((game_width / 10) - 0.3))) {
+	if ( ((x + distanceX) < 0.2) || ((x + (double(size) / 10) + distanceX) > ((game_width / 10) - 0.3))) {
 		_angle = 360.0f - _angle;
 
 		if (_angle > 260.0f && _angle < 280.0f) {
@@ -49,7 +49,7 @@ void ball::update(double delta, boundingRectangle r, direction padDirection)
 
 	//bounce from top + bottom walls
 	//disable bottom walls on release
-	if (((y + distanceY) < 0.2) || ((y + double(2 / 10) + distanceY) > ((game_height / 10) - 0.2))) {
+	if (((y + distanceY) < 0.2) || ((y + (double(size) / 10) + distanceY) > ((game_height / 10) - 0.2))) {
 		_angle = 180.0f - _angle;
 
 
@@ -64,8 +64,18 @@ void ball::update(double delta, boundingRectangle r, direction padDirection)
 		distanceY = distanceY * -1;
 	}
 
+	if (_angle > 360.0f) {
+		_angle = float(int(_angle) % int(360.0f));
+	}
+
 	//bounce with player paddle
-	if (checkCollision2w(rect, r)) {
+	if (checkCollision2w(rect, pad)) {
+
+		if (y + (double(size) / 10) > pad.y1) {
+			x = prevX;
+			y = prevY - 0.1f;
+		}
+
 		_angle = 360.0f - (_angle - 180.0f);
 
 		if (_angle > 5.0f && _angle < 355.0f) {
@@ -93,7 +103,36 @@ void ball::update(double delta, boundingRectangle r, direction padDirection)
 		_velocity = _velocity * 1.1f;
 	}
 
+	bool collided = false;
+	for (int i = 0; i < bricks.size(); i++) {
+		if (bricks[i]._isActive && (checkCollision2w(rect, bricks[i].getBoundingRect())) && !collided) {
+			/*
+			if (y + (double(size) / 10) > bricks[i].y1) {
+				x = prevX;
+				y = prevY - 0.01f;
+			}
+			if (y - (double(size) / 10) < bricks[i].y2) {
+				x = prevX;
+				y = prevY + 0.01f;
+			}
+			if (x + (double(size) / 10) > bricks[i].x1) {
+				x = prevX - 0.01f;
+				y = prevY;
+			}
+			if (x - (double(size) / 10) < bricks[i].x2) {
+				x = prevX + 0.01f;
+				y = prevY;
+			}
+			*/
 
+			_angle = 360.0f - (_angle - 180.0f);
+
+			distanceX = linearVelocityX(_angle) * _velocity * delta;
+			distanceY = linearVelocityY(_angle) * _velocity * delta;
+			bricks[i].deactivate();
+			collided = true;
+		}
+	}
 
 	x += distanceX;
 	y += distanceY;

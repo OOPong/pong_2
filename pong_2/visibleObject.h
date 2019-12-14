@@ -28,5 +28,6 @@ protected:
 	bool _isActive; // does this object need to be updated and rendered?
 	bool _isStatic; // does this object stay still?
 
+	friend class ball;
 	friend class game;
 };
