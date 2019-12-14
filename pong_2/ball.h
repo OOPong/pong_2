@@ -1,10 +1,11 @@
 ﻿#pragma once
 #include "visibleObject.h"
+#include "brick.h"
 class ball: public visibleObject
 {
 public:
 	ball();
-	void update(double, boundingRectangle, direction);
+	void update(double, boundingRectangle, direction, std::vector<brick>&);
 	void render();
 
 private:

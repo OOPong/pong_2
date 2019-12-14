@@ -19,13 +19,11 @@ void game::borderSetup(game::game_state current_state)
 	RECT rect = { 100, 300, 800, 975 };
 	MoveWindow(hwnd, rect.top, rect.left, rect.bottom - rect.top, rect.right - rect.left, TRUE);
 
-	/*
 	//hide cursor
 	CONSOLE_CURSOR_INFO ConCurInf;
 	ConCurInf.dwSize = 10;
 	ConCurInf.bVisible = false;
 	SetConsoleCursorInfo(current_state.stdHandle, &ConCurInf);
-	*/
 
 	//in ra khung bàn chơi
 	SetConsoleTextAttribute(current_state.stdHandle, 15);
@@ -71,22 +69,16 @@ void game::update(game::game_state* state, std::chrono::steady_clock::duration d
 	}
 											//skips update if frame took too long
 	state->p1.update(frameTime);
-	state->b1.update(frameTime, state->p1.rect, state->p1.getDirection());
-	for (int i = 0; i < bricks_no; i++) {
-		state->bricks[i].update(frameTime);
-	}
+	state->b1.update(frameTime, state->p1.rect, state->p1.getDirection(), state->bricks);
 }
 
 void game::render(game::game_state state, std::chrono::time_point<std::chrono::steady_clock> c) {
 	state.p1.render();
 	state.b1.render();
 
-	/*
-	for (int i = 0; i < bricks_no; i++) {
+	for (int i = 0; i < bricks_grid_height * bricks_grid_width; i++) {
 		state.bricks[i].render();
 	}
-	*/
-	//std::cout << "TEST" << std::endl;
 
 	auto time_left = _timestep - (std::chrono::high_resolution_clock::now() - c);
 	double t = time_left.count() / 1e6;
@@ -102,6 +94,26 @@ int game::loop() {
 	bool quit_game = false;
 
 	game::game_state current_state;
+
+	char str[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+	//add bricks
+	float totalBricksHeight = bricks_grid_height * 0.4; //brick height = 0.4
+	float vleftovers = ((game_height/10) - totalBricksHeight) / 2;
+	//float vleftovers = 3; // starts placing bricks at y=3
+	int count = 0;
+	for (int i = 0; i < bricks_grid_height; i++) {
+		float totalBricksWidth = bricks_grid_width * 1; // brick width = 1;;
+		float hleftovers = (game_width/10) - totalBricksWidth;
+		float leftside = hleftovers / 2;
+		for (int j = 0; j < bricks_grid_width; j++) {
+			brick tempBrick( leftside + (double(j)+1)*1, vleftovers + (double(i)+1)*0.4, str[count]);
+			current_state.bricks.push_back(tempBrick);
+			count++;
+		}
+	}
+
+	//current_state.bricks.push_back(brick(5, 5, 'A'));
 
 	borderSetup(current_state);
 
