@@ -196,6 +196,7 @@ void game::showMenu(game::game_state& current_state)
 	{
 		if (current_state.resuming) {
 			current_state._mainState = main_state::playing;
+			borderSetup(current_state);
 		}
 		else {
 			current_state._mainState = main_state::newGame;
@@ -412,16 +413,15 @@ int game::loop() {
 		}
 		case main_state::newGame:
 		{
-			if (!current_state.resuming) {
-				brickSetup(current_state);
-				borderSetup(current_state);
-				current_state.resuming = true;
-				current_state.scoreTimer = std::chrono::steady_clock::now();
-			}
-			else {
+			if (current_state.resuming) {
 				current_state.b1.reset();
 				current_state.p1.reset();
+				current_state.bricks.clear();
 			}
+			brickSetup(current_state);
+			borderSetup(current_state);
+			current_state.resuming = true;
+			current_state.scoreTimer = std::chrono::steady_clock::now();
 			current_state._mainState = main_state::playing;
 			break;
 		}
