@@ -1,12 +1,14 @@
 ﻿#pragma once
 #include "visibleObject.h"
 #include "brick.h"
+#include "pad.h"
 class ball: public visibleObject
 {
 public:
 	ball();
-	void update(double, boundingRectangle, direction, std::vector<brick>&);
+	void update(double, pad&, std::vector<brick>&);
 	void render();
+	void reset();
 
 private:
 	int size;
@@ -18,8 +20,10 @@ private:
 	double linearVelocityX(double angle);
 	double linearVelocityY(double angle);
 
-	void collideWithBoundingRectangle(boundingRectangle r, double& distanceX, double& distanceY);
+	float snap(float angle);
+
 	bool isClamped(float, float, float);
 	bool checkCollision1w(boundingRectangle, boundingRectangle);
 	bool checkCollision2w(boundingRectangle, boundingRectangle);
+	friend class game;
 };

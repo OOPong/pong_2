@@ -6,6 +6,8 @@ public:
 	pad();
 	void update(double);
 	void render();
+	void reset();
+
 	direction getDirection();
 
 	direction movement = direction::none;
@@ -13,5 +15,6 @@ public:
 	long height;
 private:
 	double _velocity;
+	friend class ball;
 };
 

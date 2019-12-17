@@ -32,20 +32,23 @@ void pad::update(double d)
 	prevY = y;
 
 	double distance =  _velocity * d;
-	if ((movement == direction::left) && ((x - (double(length) / 20) - distance) > 0.1)) {
+	if ((movement == direction::left) && ((x - (double(length) / 20) - distance) > 0.05)) {
 		x = x - distance;
 		vx = -1;
 	}
-	else if ( (movement == direction::right) && ( (x + (double(length) / 20) + distance) < ((game_width/10)-0.2)) ) {
+	else if ( (movement == direction::right) && ( (x + (double(length) / 20) + distance) < ((game_width/10)-0.1)) ) {
 		x = x + distance;
 		vx = 1;
+	}
+	else {
+		vx = 0;
 	}
 	movement = direction::none;
 
 	rect.x1 = (x - (double(length) / 20));
 	rect.x2 = (x + (double(length) / 20));
-	rect.y1 = (y - 0.1);
-	rect.y2 = (y + 0.1);
+	rect.y1 = (y - (double(height) / 20));
+	rect.y2 = (y + (double(height) / 20));
 }
 
 void pad::render()
@@ -62,6 +65,21 @@ void pad::render()
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 		std::cout << std::flush << texture[i];
 	}
+}
+
+void pad::reset()
+{
+	x = ((game_width / 10) / 2) - ((double(length) / 10) / 2); // center the paddle
+	y = 9;
+	prevX = x;
+	prevY = y;
+
+	_velocity = 8;
+
+	vx = 8;
+	vy = 0;
+
+	movement = direction::none;
 }
 
 direction pad::getDirection()

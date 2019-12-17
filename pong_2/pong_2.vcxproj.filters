@@ -27,13 +27,13 @@
     <ClCompile Include="pad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="visibleObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="brick.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="csvLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -54,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="csvLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
