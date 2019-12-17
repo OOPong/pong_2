@@ -125,16 +125,27 @@
   <ItemGroup>
     <ClCompile Include="ball.cpp" />
     <ClCompile Include="brick.cpp" />
+<<<<<<< HEAD:pong_2/pong_2.vcxproj
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pad.cpp" />
     <ClCompile Include="Source.cpp" />
+=======
+    <ClCompile Include="csvLib.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="pad.cpp" />
+>>>>>>> c5bc662a6215cef27bff8ab6025ea503d84453d6:18120284_18120304/18120284_18120304.vcxproj
     <ClCompile Include="visibleObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ball.h" />
     <ClInclude Include="brick.h" />
     <ClInclude Include="config.h" />
+<<<<<<< HEAD:pong_2/pong_2.vcxproj
+=======
+    <ClInclude Include="csvLib.h" />
+>>>>>>> c5bc662a6215cef27bff8ab6025ea503d84453d6:18120284_18120304/18120284_18120304.vcxproj
     <ClInclude Include="game.h" />
     <ClInclude Include="pad.h" />
     <ClInclude Include="visibleObject.h" />
