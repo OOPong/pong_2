@@ -27,24 +27,15 @@
     <ClCompile Include="pad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-<<<<<<< HEAD:pong_2/pong_2.vcxproj.filters
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-=======
->>>>>>> c5bc662a6215cef27bff8ab6025ea503d84453d6:18120284_18120304/18120284_18120304.vcxproj.filters
     <ClCompile Include="visibleObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="brick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-<<<<<<< HEAD:pong_2/pong_2.vcxproj.filters
-=======
-    <ClCompile Include="csvLib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
->>>>>>> c5bc662a6215cef27bff8ab6025ea503d84453d6:18120284_18120304/18120284_18120304.vcxproj.filters
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ball.h">
@@ -65,12 +56,6 @@
     <ClInclude Include="config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-<<<<<<< HEAD:pong_2/pong_2.vcxproj.filters
-=======
-    <ClInclude Include="csvLib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
->>>>>>> c5bc662a6215cef27bff8ab6025ea503d84453d6:18120284_18120304/18120284_18120304.vcxproj.filters
   </ItemGroup>
   <ItemGroup>
     <None Include="LICENSE" />
